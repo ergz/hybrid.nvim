@@ -46,7 +46,7 @@ function M.setup()
         none            = "NONE",
 
         bg_hard         = p.dull_black,
-        bg              = p.black,
+        bg              = "#17181a",
         bg_soft         = p.bright_black,
 
         fg_soft         = p.dull_white,
