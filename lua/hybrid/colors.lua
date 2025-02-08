@@ -5,7 +5,7 @@ local M = {}
 -- stylua: ignore start
 M.palette = {
     bright_black    = "#373b41",
-    black           = "#1d1f21",
+    black           = "#17181a",
     dull_black      = "#151718",
 
     bright_white    = "#eaeaea",
@@ -46,7 +46,7 @@ function M.setup()
         none            = "NONE",
 
         bg_hard         = p.dull_black,
-        bg              = "#17181a",
+        bg              = p.black,
         bg_soft         = p.bright_black,
 
         fg_soft         = p.dull_white,
