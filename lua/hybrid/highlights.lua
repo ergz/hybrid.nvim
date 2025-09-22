@@ -19,7 +19,7 @@ function M.setup(opts)
         CursorLine = { bg = c.line },
         Directory = { fg = c.blue },
         DiffAdd = { bg = utils.darken(c.diff.add, 0.2, c.bg) },
-        DiffChange = { bg = utils.darken(c.diff.change, 0.2, c.bg) },
+        DiffChange = { bg = utils.darken(c.diff.change, 0.05, c.bg) },
         DiffDelete = { bg = utils.darken(c.diff.delete, 0.2, c.bg) },
         DiffText = { bg = utils.darken(c.diff.text, 0.4, utils.darken(c.diff.change, 0.2, c.bg)) },
         EndOfBuffer = { fg = c.fg_soft },
@@ -48,6 +48,7 @@ function M.setup(opts)
         NormalFloat = { fg = c.fg, bg = c.float.bg },
         FloatBorder = { fg = c.float.border, bg = c.float.bg },
         FloatTitle = { fg = c.float.title, bg = c.float.bg },
+        FloatFooter = { fg = c.float.footer, bg = c.float.bg },
         NormalNC = { fg = c.fg, bg = opts.transparent and c.none or c.bg },
         Pmenu = { fg = c.fg, bg = c.bg_hard },
         PmenuSel = { bg = c.selection, bold = opts.bold },
@@ -58,7 +59,7 @@ function M.setup(opts)
         PmenuSbar = { bg = c.bg_hard },
         PmenuThumb = { bg = c.selection },
         Question = { fg = c.primary },
-        QuickFixLine = { bg = c.selection, bold = opts.bold },
+        QuickFixLine = { bold = opts.bold, underline = opts.underline },
         Search = { fg = c.yellow, bg = c.bg, reverse = opts.inverse },
         -- SnippetTabstop = {},
         SpecialKey = { fg = c.primary },
@@ -314,8 +315,8 @@ function M.setup(opts)
         ["@markup.link.label"] = { fg = c.bright_blue },
         ["@markup.link.url"] = { fg = c.cyan, underline = opts.underline },
 
-        ["@markup.raw"] = { bg = c.bg_soft },
-        ["@markup.raw.block"] = { bg = c.bg_soft, fg = c.green },
+        ["@markup.raw"] = { bg = c.line },
+        ["@markup.raw.block"] = { bg = c.line, fg = c.green },
 
         ["@tag"] = { link = "Label" },
         ["@tag.attribute"] = { link = "@property" },
@@ -338,16 +339,21 @@ function M.setup(opts)
         DiagnosticInfo = { fg = c.diag.info },
         DiagnosticHint = { fg = c.diag.hint },
         DiagnosticOk = { fg = c.diag.ok },
-        DiagnosticUnderlineError = { undercurl = opts.undercurl, sp = c.diag.error },
-        DiagnosticUnderlineWarn = { undercurl = opts.undercurl, sp = c.diag.warning },
-        DiagnosticUnderlineInfo = { undercurl = opts.undercurl, sp = c.diag.info },
-        DiagnosticUnderlineHint = { undercurl = opts.undercurl, sp = c.diag.hint },
-        DiagnosticUnderlineOk = { undercurl = opts.undercurl, sp = c.diag.ok },
+
         DiagnosticVirtualTextError = { bg = utils.darken(c.diag.error, 0.1, c.bg), fg = c.diag.error },
         DiagnosticVirtualTextWarn = { bg = utils.darken(c.diag.warning, 0.1, c.bg), fg = c.diag.warning },
         DiagnosticVirtualTextInfo = { bg = utils.darken(c.diag.info, 0.1, c.bg), fg = c.diag.info },
         DiagnosticVirtualTextHint = { bg = utils.darken(c.diag.hint, 0.1, c.bg), fg = c.diag.hint },
         DiagnosticVirtualTextOk = { bg = utils.darken(c.diag.ok, 0.1, c.bg), fg = c.diag.hint },
+
+        DiagnosticUnderlineError = { undercurl = opts.undercurl, sp = c.diag.error },
+        DiagnosticUnderlineWarn = { undercurl = opts.undercurl, sp = c.diag.warning },
+        DiagnosticUnderlineInfo = { undercurl = opts.undercurl, sp = c.diag.info },
+        DiagnosticUnderlineHint = { undercurl = opts.undercurl, sp = c.diag.hint },
+        DiagnosticUnderlineOk = { undercurl = opts.undercurl, sp = c.diag.ok },
+
+        -- DiagnosticDeprecated = {},
+        -- DiagnosticUnnecessary = {},
 
         -- NeoVim
         healthError = { link = "DiagnosticError" },
@@ -366,42 +372,41 @@ function M.setup(opts)
 
         -- LSP highlight
         -- :h lsp-highlight
-        LspReferenceRead = { bg = c.selection, bold = opts.bold },
         LspReferenceText = { bg = c.selection },
+        LspReferenceRead = { bg = c.selection, bold = opts.bold },
         LspReferenceWrite = { bg = c.selection, bold = opts.bold, underline = opts.underline },
+        -- LspInlayHint = {},
+        -- LspCodeLens = {},
+        -- LspCodeLensSeparator = {},
         LspSignatureActiveParameter = { link = "Visual" },
-
-        -- Lspconfig
-        -- :h lspconfig-highlight
-        LspInfoBorder = { link = "FloatBorder" },
 
         -- -- LSP Semantic Token
         -- :h lsp-semantic-highlight
         -- {{{
         -- for the type
-        ["@lsp.type.namespace"] = { link = "@module" },
         -- ["@lsp.type.class"] = {},
-        -- ["@lsp.type.enum"] = {},
-        -- ["@lsp.type.interface"] = {},
-        -- ["@lsp.type.struct"] = {},
-        -- ["@lsp.type.typeParameter"] = {},
-        ["@lsp.type.type"] = { link = "@type" },
-        ["@lsp.type.parameter"] = { link = "@variable.parameter" },
-        ["@lsp.type.variable"] = {}, -- use treesitter styles
-        ["@lsp.type.property"] = { link = "@property" },
-        -- ["@lsp.type.enumMember"] = {},
+        ["@lsp.type.comment"] = {}, -- use treesitter styles
         -- ["@lsp.type.decorator"] = {},
+        -- ["@lsp.type.enum"] = {},
+        -- ["@lsp.type.enumMember"] = {},
         -- ["@lsp.type.event"] = {},
         ["@lsp.type.function"] = { link = "@function" },
-        ["@lsp.type.method"] = { link = "@function.method" },
-        ["@lsp.type.macro"] = { link = "@function.macro" },
-        ["@lsp.type.label"] = { link = "@label" },
-        ["@lsp.type.comment"] = {}, -- use treesitter styles
-        ["@lsp.type.string"] = { link = "@string" },
+        -- ["@lsp.type.interface"] = {},
         ["@lsp.type.keyword"] = { link = "@keyword" },
+        ["@lsp.type.macro"] = { link = "@function.macro" },
+        ["@lsp.type.method"] = { link = "@function.method" },
+        -- ["@lsp.type.modifier"] = {},
+        ["@lsp.type.namespace"] = { link = "@module" },
         ["@lsp.type.number"] = { link = "@number" },
-        -- ["@lsp.type.regexp"] = {},
         ["@lsp.type.operator"] = { link = "@operator" },
+        ["@lsp.type.parameter"] = { link = "@variable.parameter" },
+        ["@lsp.type.property"] = { link = "@property" },
+        -- ["@lsp.type.regexp"] = {},
+        ["@lsp.type.string"] = { link = "@string" },
+        -- ["@lsp.type.struct"] = {},
+        ["@lsp.type.type"] = { link = "@type" },
+        ["@lsp.type.typeParameter"] = {},
+        ["@lsp.type.variable"] = {}, -- use treesitter styles
 
         -- for each modifier
         ["@lsp.typemod.function.defaultLibrary"] = { link = "@function.builtin" },
@@ -411,14 +416,34 @@ function M.setup(opts)
         -- WhichKey
         -- :h which-key.nvim-which-key-colors
         WhichKey = { fg = c.primary },
-        WhichKeyGroup = { fg = c.green },
+        -- WhichKeyBorder = {},
         WhichKeyDesc = { fg = c.fg },
+        WhichKeyGroup = { fg = c.green },
+
+        WhichKeyIcon = { fg = c.fg },
+        WhichKeyIconAzure = { fg = c.bright_blue },
+        WhichKeyIconBlue = { fg = c.blue },
+        WhichKeyIconCyan = { fg = c.cyan },
+        WhichKeyIconGreen = { fg = c.green },
+        WhichKeyIconGrey = { fg = c.fg_soft },
+        WhichKeyIconOrange = { fg = c.dull_yellow },
+        WhichKeyIconPurple = { fg = c.magenta },
+        WhichKeyIconRed = { fg = c.red },
+        WhichKeyIconYellow = { fg = c.yellow },
+
+        -- WhichKeyNormal = {},
+        -- WhichKeySeparator = {},
+        -- WhichKeyTitle = {},
+        -- WhichKeyValue = {},
 
         -- GitSigns
         -- :h gitsigns-highlight-groups
         GitSignsAdd = { fg = c.diff.add },
         GitSignsChange = { fg = c.diff.change },
         GitSignsDelete = { fg = c.diff.delete },
+        -- GitSignsChangedelete = {},
+        -- GitSignsTopdelete = {},
+        -- GitSignsUntracked = {},
 
         -- Telescope
         TelescopeNormal = { fg = c.fg, bg = c.float.bg },
@@ -427,13 +452,13 @@ function M.setup(opts)
         TelescopeMatching = { fg = c.match, bold = opts.bold },
 
         -- NvimTree
-        -- :h nvim-tree-highlight
+        -- :h *nvim-tree-highlight-default
         -- {{{
         -- File Text:
-        NvimTreeSymlink = { fg = c.cyan },
         NvimTreeExecFile = { fg = c.green, bold = opts.bold },
-        NvimTreeSpecialFile = { fg = c.yellow, underline = opts.underline },
         NvimTreeImageFile = { fg = c.magenta },
+        NvimTreeSpecialFile = { fg = c.yellow, underline = opts.underline },
+        NvimTreeSymlink = { fg = c.cyan },
         -- Folder Text:
         NvimTreeRootFolder = { fg = c.blue, bold = opts.bold },
         -- Indent:
@@ -450,27 +475,6 @@ function M.setup(opts)
         NvimTreeGitStagedIcon = { fg = c.diff.add },
         -- }}}
 
-        -- NeoTree
-        -- :h neo-tree-highlights
-        NeoTreeGitAdded = { fg = c.diff.add },
-        NeoTreeGitConflict = { fg = c.dull_yellow },
-        NeoTreeGitDeleted = { fg = c.diff.delete },
-        NeoTreeGitIgnored = { fg = c.comment },
-        NeoTreeGitModified = { fg = c.diff.change },
-        NeoTreeGitUnstaged = { fg = c.diff.change },
-        NeoTreeGitUntracked = { fg = c.diff.add },
-        NeoTreeGitStaged = { fg = c.diff.add },
-        NeoTreeRootName = { fg = c.primary },
-        NeoTreeSymbolicLinkTarget = { fg = c.cyan },
-        NeoTreeFloatTitle = { fg = c.float.title },
-        NeoTreeFileIcon = { fg = c.fg },
-        NeoTreeDimText = { fg = c.fg_soft },
-
-        -- Dashboard
-        -- :h dashboard-configuration-theme-config
-        DashboardHeader = { fg = c.primary },
-        DashboardFooter = { fg = c.primary },
-
         -- BufferLine
         BufferLineIndicatorSelected = { fg = c.primary },
         BufferLineOffsetSeparator = { link = "WinSeparator" },
@@ -485,14 +489,8 @@ function M.setup(opts)
 
         -- Navic
         -- :h navic-highlights
-        NavicSeparator = { fg = c.fg },
+        NavicSeparator = { fg = c.fg_soft },
         NavicText = { fg = c.fg },
-
-        -- Illuminate
-        -- :h illuminate-highlight-groups
-        IlluminatedWordText = { link = "LspReferenceText" },
-        IlluminatedWordRead = { link = "LspReferenceRead" },
-        IlluminatedWordWrite = { link = "LspReferenceWrite" },
 
         -- nvim-dap-ui
         -- source https://github.com/rcarriga/nvim-dap-ui/blob/master/lua/dapui/config/highlights.lua
