@@ -3,7 +3,7 @@ local utils = require("hybrid.utils")
 local M = {}
 
 -- stylua: ignore start
-M.palette = {
+M.palette_old = {
     bright_black    = "#373b41",
     black           = "#17181a",
     dull_black      = "#151718",
@@ -36,7 +36,43 @@ M.palette = {
     cyan            = "#8abeb7",
     dull_cyan       = "#5e8d87",
 }
+
+M.palette = {
+    bright_black    = "#4a4f55",
+    black           = "#202224",
+    dull_black      = "#1a1b1d",
+
+    bright_white    = "#ffffff",
+    white           = "#e0e0e0",
+    dull_white      = "#9a9fa5",
+
+    bright_red      = "#e05a5f",
+    red             = "#d36f6f",
+    dull_red        = "#b84d4d",
+
+    bright_green    = "#c6dc57",
+    green           = "#c0c96f",
+    dull_green      = "#9db34b",
+
+    bright_yellow   = "#f5d557",
+    yellow          = "#f9d47f",
+    dull_yellow     = "#e8a86a",
+
+    bright_blue     = "#89b7eb",
+    blue            = "#8fb7cf",
+    dull_blue       = "#6a93b0",
+
+    bright_magenta  = "#d1a3e9",
+    magenta         = "#c1a1cd",
+    dull_magenta    = "#93729d",
+
+    bright_cyan     = "#7fd3c2",
+    cyan            = "#97cfc8",
+    dull_cyan       = "#6ba9a1",
+}
+
 -- stylua: ignore end
+--
 
 function M.setup()
     local p = M.palette
