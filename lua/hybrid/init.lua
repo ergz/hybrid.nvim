@@ -14,6 +14,7 @@ M.opts = {
     strikethrough = true,
     inverse = true,
     transparent = false,
+    palette = "default",
     overrides = function(highlights, colors) end,
 }
 
