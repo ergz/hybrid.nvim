@@ -4,6 +4,8 @@
 
 A dark [Neovim](https://github.com/neovim/neovim) theme written in [Lua](https://www.lua.org).
 
+This version is modified to add new color palettes.
+
 <details open>
 <summary>Palette</summary>
 <br>
