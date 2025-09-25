@@ -1,9 +1,516 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+colors/
+  hybrid.lua
+lua/
+  hybrid/
+    colors.lua
+    highlights.lua
+    init.lua
+    utils.lua
+  lualine/
+    themes/
+      hybrid.lua
+LICENSE
+README.md
+stylua.toml
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="colors/hybrid.lua">
+require("hybrid").load()
+</file>
+
+<file path="lua/hybrid/init.lua">
+local M = {}
+
+M.opts = {
+    terminal_colors = true,
+    undercurl = true,
+    underline = true,
+    bold = true,
+    italic = {
+        strings = false,
+        emphasis = true,
+        comments = true,
+        folds = true,
+    },
+    strikethrough = true,
+    inverse = true,
+    transparent = false,
+    overrides = function(highlights, colors) end,
+}
+
+M.setup = function(opts)
+    M.opts = vim.tbl_deep_extend("force", M.opts, opts or {})
+end
+
+M.load = function()
+    if vim.version().minor < 8 then
+        vim.notify_once("[hybrid.nvim] You should use Neovim 0.8 or higher.")
+    end
+
+    if vim.g.colors_name then
+        vim.cmd.hi("clear")
+    end
+
+    vim.o.termguicolors = true
+    vim.g.colors_name = "hybrid"
+
+    local highlights = require("hybrid.highlights").setup(M.opts)
+
+    for group, hl in pairs(highlights) do
+        vim.api.nvim_set_hl(0, group, hl)
+    end
+end
+
+return M
+</file>
+
+<file path="lua/hybrid/utils.lua">
+local M = {}
+
+M.bg = "#000000"
+M.fg = "#ffffff"
+
+---@param c  string
+local function hexToRgb(c)
+    c = string.lower(c)
+    return { tonumber(c:sub(2, 3), 16), tonumber(c:sub(4, 5), 16), tonumber(c:sub(6, 7), 16) }
+end
+
+---@param foreground string foreground color
+---@param background string background color
+---@param alpha number|string number between 0 and 1. 0 results in bg, 1 results in fg
+function M.blend(foreground, background, alpha)
+    alpha = type(alpha) == "string" and (tonumber(alpha, 16) / 0xff) or alpha
+    local bg = hexToRgb(background)
+    local fg = hexToRgb(foreground)
+
+    local blendChannel = function(i)
+        local ret = (alpha * fg[i] + ((1 - alpha) * bg[i]))
+        return math.floor(math.min(math.max(0, ret), 255) + 0.5)
+    end
+
+    return string.format("#%02x%02x%02x", blendChannel(1), blendChannel(2), blendChannel(3))
+end
+
+function M.darken(hex, amount, bg)
+    return M.blend(hex, bg or M.bg, amount)
+end
+
+function M.lighten(hex, amount, fg)
+    return M.blend(hex, fg or M.fg, amount)
+end
+
+return M
+</file>
+
+<file path="LICENSE">
+MIT License
+
+Copyright (c) 2024 HoNamDuong
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+</file>
+
+<file path="stylua.toml">
+indent_type = "Spaces"
+indent_width = 4
+column_width = 120
+</file>
+
+<file path="lua/lualine/themes/hybrid.lua">
+local c = require("hybrid.colors").setup()
+local utils = require("hybrid.utils")
+
+local M = {}
+
+M.normal = {
+    a = { bg = c.blue, fg = c.bg },
+    b = { bg = utils.darken(c.blue, 0.2, c.line), fg = c.fg },
+    c = { bg = c.line, fg = c.fg },
+}
+
+M.insert = {
+    a = { bg = c.green, fg = c.bg },
+    b = { bg = utils.darken(c.green, 0.2, c.line), fg = c.fg },
+}
+
+M.command = {
+    a = { bg = c.yellow, fg = c.bg },
+    b = { bg = utils.darken(c.yellow, 0.2, c.line), fg = c.fg },
+}
+
+M.visual = {
+    a = { bg = c.magenta, fg = c.bg },
+    b = { bg = utils.darken(c.magenta, 0.2, c.line), fg = c.fg },
+}
+
+M.replace = {
+    a = { bg = c.red, fg = c.bg },
+    b = { bg = utils.darken(c.red, 0.2, c.line), fg = c.fg },
+}
+
+M.terminal = {
+    a = { bg = c.cyan, fg = c.bg },
+    b = { bg = utils.darken(c.cyan, 0.2, c.line), fg = c.fg },
+}
+
+M.inactive = {
+    a = { bg = c.bg, fg = c.fg },
+    b = { bg = c.bg, fg = c.fg },
+    c = { bg = c.bg, fg = c.fg },
+}
+
+return M
+</file>
+
+<file path="README.md">
+<div align="center">
+
+# hybrid.nvim
+
+A dark [Neovim](https://github.com/neovim/neovim) theme written in [Lua](https://www.lua.org).
+
+<details open>
+<summary>Palette</summary>
+<br>
+
+![Palette](./palette.png)
+
+</details>
+<br>
+
+<details open>
+<summary>Screenshot</summary>
+<br>
+
+![Screenshot](./screenshot.png)
+
+</details>
+<br>
+
+</div>
+
+## Prerequisites
+
+Neovim 0.8.0+
+
+## Installing
+
+Using `packer`
+
+```lua
+use { "HoNamDuong/hybrid.nvim" }
+```
+
+Using `lazy.nvim`
+
+```lua
+{
+    "HoNamDuong/hybrid.nvim",
+    lazy = false,
+    priority = 1000,
+    opts = {},
+}
+```
+
+## Usage
+
+Inside `init.vim`
+
+```vim
+colorscheme hybrid
+```
+
+Inside `init.lua`
+
+```lua
+vim.cmd.colorscheme("hybrid")
+```
+
+## Configuration
+
+```lua
+-- Default options:
+require("hybrid").setup({
+    terminal_colors = true,
+    undercurl = true,
+    underline = true,
+    bold = true,
+    italic = {
+        strings = false,
+        emphasis = true,
+        comments = true,
+        folds = true,
+    },
+    strikethrough = true,
+    inverse = true,
+    transparent = false,
+    overrides = function(highlights, colors) end,
+})
+```
+
+## Overrides
+
+`config.overrides(highlights, colors)` can be used to override highlight groups.
+
+For default values of `colors` and `highlights`, please consult [colors](./lua/hybrid/colors.lua), and [highlights](./lua/hybrid/highlights.lua).
+
+```lua
+require("hybrid").setup({
+    overrides = function(hl, c)
+        local background = "#1d1f21"
+        hl.TelescopeNormal = {
+            fg = c.fg,
+            bg = background,
+        }
+        hl.TelescopeBorder = {
+            fg = c.fg_hard,
+            bg = c.bg,
+        }
+        hl.TelescopeTitle = {
+            fg = c.fg_hard,
+            bg = c.bg,
+            bold = true,
+        }
+    end,
+})
+```
+
+Please note that the override values must follow the attributes from the highlight group map, such as:
+
+-   **fg** - foreground color
+-   **bg** - background color
+-   **bold** - true or false for bold font
+-   **italic** - true or false for italic font
+
+Other values can be seen in [here](<https://neovim.io/doc/user/builtin.html#synIDattr()>).
+
+## Inspiration
+
+-   [vim-hybrid](https://github.com/w0ng/vim-hybrid)
+-   [vim-tomorrow-theme](https://github.com/chriskempson/vim-tomorrow-theme)
+-   [tokyonight.nvim](https://github.com/folke/tokyonight.nvim)
+-   [gruvbox.nvim](https://github.com/ellisonleao/gruvbox.nvim)
+-   [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim)
+</file>
+
+<file path="lua/hybrid/colors.lua">
+local utils = require("hybrid.utils")
+
+local M = {}
+
+-- stylua: ignore start
+M.palette_old = {
+    bright_black    = "#373b41",
+    black           = "#17181a",
+    dull_black      = "#151718",
+
+    bright_white    = "#eaeaea",
+    white           = "#c5c8c6",
+    dull_white      = "#707880",
+
+    bright_red      = "#d54e53",
+    red             = "#cc6666",
+    dull_red        = "#a54242",
+
+    bright_green    = "#b9ca4a",
+    green           = "#b5bd68",
+    dull_green      = "#8c9440",
+
+    bright_yellow   = "#e7c547",
+    yellow          = "#f0c674",
+    dull_yellow     = "#de935f",
+
+    bright_blue     = "#7aa6da",
+    blue            = "#81a2be",
+    dull_blue       = "#5f819d",
+
+    bright_magenta  = "#c397d8",
+    magenta         = "#b294bb",
+    dull_magenta    = "#85678f",
+
+    bright_cyan     = "#70c0b1",
+    cyan            = "#8abeb7",
+    dull_cyan       = "#5e8d87",
+}
+
+M.palette = {
+    bright_black    = "#4a4f55",
+    black           = "#121314",
+    dull_black      = "#0f1011",
+
+    bright_white    = "#ffffff",
+    white           = "#e0e0e0",
+    dull_white      = "#9a9fa5",
+
+    bright_red      = "#e05a5f",
+    red             = "#d36f6f",
+    dull_red        = "#b84d4d",
+
+    bright_green    = "#c6dc57",
+    green           = "#c0c96f",
+    dull_green      = "#9db34b",
+
+    bright_yellow   = "#f5d557",
+    yellow          = "#f9d47f",
+    dull_yellow     = "#e8a86a",
+
+    bright_blue     = "#89b7eb",
+    blue            = "#8fb7cf",
+    dull_blue       = "#6a93b0",
+
+    bright_magenta  = "#d1a3e9",
+    magenta         = "#c1a1cd",
+    dull_magenta    = "#93729d",
+
+    bright_cyan     = "#7fd3c2",
+    cyan            = "#97cfc8",
+    dull_cyan       = "#6ba9a1",
+}
+
+-- stylua: ignore end
+--
+
+function M.setup()
+    local p = M.palette
+
+    -- stylua: ignore start
+    local colors = {
+        none            = "NONE",
+
+        bg_hard         = p.dull_black,
+        bg              = p.black,
+        bg_soft         = p.bright_black,
+
+        fg_soft         = p.dull_white,
+        fg              = p.white,
+        fg_hard         = p.bright_white,
+
+        bright_red      = p.bright_red,
+        bright_green    = p.bright_green,
+        bright_yellow   = p.bright_yellow,
+        bright_blue     = p.bright_blue,
+        bright_magenta  = p.bright_magenta,
+        bright_cyan     = p.bright_cyan,
+
+        red             = p.red,
+        green           = p.green,
+        yellow          = p.yellow,
+        blue            = p.blue,
+        magenta         = p.magenta,
+        cyan            = p.cyan,
+
+        dull_red        = p.dull_red,
+        dull_green      = p.dull_green,
+        dull_yellow     = p.dull_yellow,
+        dull_blue       = p.dull_blue,
+        dull_magenta    = p.dull_magenta,
+        dull_cyan       = p.dull_cyan,
+
+        diff = {
+            delete      = p.dull_red,
+            add         = p.dull_green,
+            change      = p.dull_blue,
+            text        = p.dull_white,
+        },
+
+        diag = {
+            error       = p.bright_red,
+            warning     = p.bright_yellow,
+            info        = p.bright_blue,
+            hint        = p.bright_cyan,
+            ok          = p.bright_green,
+        },
+
+        float = {
+            bg          = p.dull_black,
+            border      = p.bright_black,
+            title       = p.blue,
+            footer      = p.green,
+        },
+
+        line            = utils.darken(p.bright_black, 0.4, p.black),
+        comment         = p.dull_white,
+        selection       = p.bright_black,
+        match           = p.blue,
+        primary         = p.bright_blue,
+    }
+    -- stylua: ignore end
+
+    return colors
+end
+
+return M
+</file>
+
+<file path="lua/hybrid/highlights.lua">
 local utils = require("hybrid.utils")
 
 local M = {}
 
 function M.setup(opts)
-    local c = require("hybrid.colors").setup(opts)
+    local c = require("hybrid.colors").setup()
 
     local highlights = {
         -- Highlight default
@@ -619,3 +1126,6 @@ function M.setup(opts)
 end
 
 return M
+</file>
+
+</files>
