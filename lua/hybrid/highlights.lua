@@ -156,7 +156,7 @@ function M.setup(opts)
         -- @label             ; GOTO and other labels (e.g. `label:` in C), including heredoc labels
 
         ["@variable"] = { fg = c.fg },
-        ["@variable.builtin"] = { fg = c.dull_cyan },
+        ["@variable.builtin"] = { fg = c.fg_soft },
         ["@variable.parameter"] = { fg = c.yellow },
         ["@variable.member"] = { fg = c.cyan },
 
